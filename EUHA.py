@@ -1,12 +1,12 @@
-import time
-import keyboard
-import winsound
+from time import time, sleep
+from keyboard import press_and_release, read_key
+from winsound import PlaySound, SND_ALIAS
 import random
 
-eu_log = open('C:\\Users\\Flak\\Documents\\Entropia Universe\\chat.log')
-startup_time = time.time()
+eu_log = open(r'C:\Users\Flak\Documents\Entropia Universe\chat.log')
+startup_time = time()
 
-while time.time() < startup_time + 3:  # Delay to skip the old logs
+while time() < startup_time + 3:  # Delay to skip the old logs
     try:
         eu_log.readline()
     except UnicodeDecodeError:
@@ -29,24 +29,24 @@ def one_mob(hp, gun):
                     gun = 'LP-10'
             hp = round(hp - dmg, 1)  # substract hp from mob
             if gun == 'LP-10' and 3 < hp < 20:  # switch guns if big mob has <20 hp
-                time.sleep(round(random.uniform(0, 0.6), 3))  # i am very human i press keys with delay
-                keyboard.press_and_release('3')  # switch to RG
+                sleep(round(random.uniform(0, 0.6), 3))  # i am very human i press keys with delay
+                press_and_release('3')  # switch to RG
                 gun = 'RG'
             elif gun != 'SA' and 0 < hp < 3.1:  # switch guns if any mob has <3 hp
-                time.sleep(round(random.uniform(0, 0.5), 3))
-                keyboard.press_and_release('2')  # switch to SA
+                sleep(round(random.uniform(0, 0.5), 3))
+                press_and_release('2')  # switch to SA
                 gun = 'SA'
             if hp <= 0:  # if mob is dead, start over
                 same_mob = False
                 if gun != 'RG':  # whatever gun was used, switch back to RG
-                    time.sleep(round(random.uniform(0.1, 0.6), 3))
-                    keyboard.press_and_release('3')
+                    sleep(round(random.uniform(0.1, 0.6), 3))
+                    press_and_release('3')
                     gun = 'RG'
             else:  # if mob is not dead, continue with same hp and gun
                 one_mob(hp, gun)
-        elif keyboard.is_pressed('`'):  # if something went wrong, reset
+        elif read_key() == '`':  # if something went wrong, reset
             print('-')
-            time.sleep(0.2)  # keyboard.is_pressed() can sometimes work multiple times
+            sleep(0.2)  # read_key() can sometimes work multiple times
             same_mob = False
         else:
             continue  # read next log
@@ -56,5 +56,5 @@ def one_mob(hp, gun):
 
 while True:
     same_mob = True
-    winsound.PlaySound('*', winsound.SND_ALIAS)  # sound signal for mob is dead and start of the hunt
+    PlaySound('*', SND_ALIAS)  # sound signal for mob is dead and start of the hunt
     one_mob(9.9, 'RG')
